@@ -8,7 +8,15 @@ public class MaxTimesTables : MonoBehaviour
     [SerializeField] private GameManager gameManager;
     [SerializeField] private TMP_Text timesTablesText;
 
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip keyClip;
+
     private string input;
+
+    void Start()
+    {
+        audioSource = gameManager.GetComponent<AudioSource>();
+    }
 
     void Update()
     {
@@ -24,6 +32,7 @@ public class MaxTimesTables : MonoBehaviour
 
         timesTablesText.text = input;
         gameManager.maxTimesTables = int.Parse(input);
+        audioSource.PlayOneShot(keyClip);
     }
 
     private void HandleInputs()
@@ -90,6 +99,7 @@ public class MaxTimesTables : MonoBehaviour
             {
                 gameManager.maxTimesTables = 0;
             }
+            audioSource.PlayOneShot(keyClip);
         }
     }
 }

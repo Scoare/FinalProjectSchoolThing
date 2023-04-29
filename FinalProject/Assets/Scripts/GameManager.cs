@@ -28,8 +28,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private TMP_Text scoreText;
 
+    private AudioSource audioSource;
+
+    [SerializeField] private AudioClip ringClip;
+    [SerializeField] private AudioClip keyClip;
+
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         inGameCanvas.gameObject.SetActive(false);
         gameOverCanvas.gameObject.SetActive(false);
     }
@@ -55,6 +61,7 @@ public class GameManager : MonoBehaviour
     {
         currentTime = startingTime;
         timerStarted = true;
+        audioSource.Play();
     }
 
     private void HandleTimer()
@@ -82,6 +89,9 @@ public class GameManager : MonoBehaviour
             gameOverCanvas.gameObject.SetActive(true);
             inGameCanvas.gameObject.SetActive(false);
             gameOverCanvas.transform.GetChild(1).GetComponent<TMP_Text>().text += score.ToString();
+
+            audioSource.Stop();
+            audioSource.PlayOneShot(ringClip);
         }
     }
 
@@ -96,66 +106,73 @@ public class GameManager : MonoBehaviour
         answerText.text = "";
     }
 
+    private void CheckInput()
+    {
+        answerText.text = input;
+        audioSource.PlayOneShot(keyClip);
+    }
+
     private void HandleInputs()
     {
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             input += "0";
-            answerText.text = input;
+            CheckInput();
         }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             input += "1";
-            answerText.text = input;
+            CheckInput();
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             input += "2";
-            answerText.text = input;
+            CheckInput();
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             input += "3";
-            answerText.text = input;
+            CheckInput();
         }
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             input += "4";
-            answerText.text = input;
+            CheckInput();
         }
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             input += "5";
-            answerText.text = input;
+            CheckInput();
         }
         if (Input.GetKeyDown(KeyCode.Alpha6))
         {
             input += "6";
-            answerText.text = input;
+            CheckInput();
         }
         if (Input.GetKeyDown(KeyCode.Alpha7))
         {
             input += "7";
-            answerText.text = input;
+            CheckInput();
         }
         if (Input.GetKeyDown(KeyCode.Alpha8))
         {
             input += "8";
-            answerText.text = input;
+            CheckInput();
         }
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             input += "9";
-            answerText.text = input;
+            CheckInput();
         }
         if (Input.GetKeyDown(KeyCode.Backspace) && input.Length > 0)
         {
             input = input.Substring(0, input.Length - 1);
-            answerText.text = input;
+            CheckInput();
         }
         if (Input.GetKeyDown(KeyCode.Return))
         {
             CheckAnswer();
+            CheckInput();
         }
     }
 }
