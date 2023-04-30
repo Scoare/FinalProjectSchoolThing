@@ -33,6 +33,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AudioClip ringClip;
     [SerializeField] private AudioClip keyClip;
 
+    [SerializeField] public AudioClip[] tutorialClips;
+
+    [HideInInspector] public int tutorialStage = 0;
+
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -42,19 +46,73 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        StartTimer();
-        NewQuestion();
-        score = 0;
+        if(tutorialStage == 0)
+        {
+            StartTimer();
+            NewQuestion();
+            score = 0;
+        }
+        else
+        {
+            questionText.text = "";
+            answerText.text = "";
+            timerText.text = "60";
+            scoreText.text = "0";
+
+            tutorialStage = 4;
+            StartCoroutine(ActualStartTutorial());
+        }
+    }
+
+    public IEnumerator ActualStartTutorial()
+    {
+        audioSource.PlayOneShot(tutorialClips[7]);
+        yield return new WaitForSeconds(15);
+        audioSource.PlayOneShot(tutorialClips[8]);
+        yield return new WaitForSeconds(2);
+        audioSource.PlayOneShot(tutorialClips[9]);
+        yield return new WaitForSeconds(6);
+        audioSource.PlayOneShot(tutorialClips[10]);
+        yield return new WaitForSeconds(6);
+
+        tutorialStage = 0;
+        StartGame();
+    }
+
+    public IEnumerator StartTutorial()
+    {
+        maxTimesTables = 0;
+
+        tutorialStage = 1;
+        audioSource.PlayOneShot(tutorialClips[0]);
+        yield return new WaitForSeconds(19);
+        audioSource.PlayOneShot(tutorialClips[1]);
+        yield return new WaitForSeconds(1);
+        audioSource.PlayOneShot(tutorialClips[2]);
+        yield return new WaitForSeconds(4);
+        audioSource.PlayOneShot(tutorialClips[3]);
+        yield return new WaitForSeconds(1);
+
+        tutorialStage = 2;
+
+        yield return new WaitForSeconds(10);
+        if (maxTimesTables == 0 && tutorialStage == 2)
+        {
+            audioSource.PlayOneShot(tutorialClips[4]);
+        }
     }
 
     void Update()
     {
-        HandleTimer();
-        if (inGameCanvas.gameObject.activeSelf)
+        if(tutorialStage == 0)
         {
-            HandleInputs();
+            HandleTimer();
+            if (inGameCanvas.gameObject.activeSelf)
+            {
+                HandleInputs();
+            }
+            CheckForGameEnd();
         }
-        CheckForGameEnd();
     }
 
     public void StartTimer()
@@ -75,8 +133,8 @@ public class GameManager : MonoBehaviour
 
     private void NewQuestion()
     {
-        firstNumber = Random.Range(2, maxTimesTables);
-        secondNumber = Random.Range(2, maxTimesTables);
+        firstNumber = Random.Range(1, maxTimesTables);
+        secondNumber = Random.Range(1, maxTimesTables);
         answer = firstNumber * secondNumber;
         questionText.text = firstNumber + " x " + secondNumber;
     }
@@ -88,7 +146,7 @@ public class GameManager : MonoBehaviour
             timerStarted = false;
             gameOverCanvas.gameObject.SetActive(true);
             inGameCanvas.gameObject.SetActive(false);
-            gameOverCanvas.transform.GetChild(1).GetComponent<TMP_Text>().text += score.ToString();
+            gameOverCanvas.transform.GetChild(1).GetComponent<TMP_Text>().text = "Score: " + score.ToString();
 
             audioSource.Stop();
             audioSource.PlayOneShot(ringClip);

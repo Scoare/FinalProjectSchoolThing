@@ -20,7 +20,10 @@ public class MaxTimesTables : MonoBehaviour
 
     void Update()
     {
-        HandleInputs();
+        if (gameManager.tutorialStage != 1)
+        {
+            HandleInputs();
+        }
     }
 
     private void CheckInput()

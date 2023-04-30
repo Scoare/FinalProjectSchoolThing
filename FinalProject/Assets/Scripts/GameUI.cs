@@ -13,6 +13,7 @@ public class GameUI : MonoBehaviour
     [SerializeField] private Canvas gameOverCanvas;
 
     [SerializeField] private Button startButton;
+    [SerializeField] private Button tutorialButton;
 
     private AudioSource audioSource;
     [SerializeField] private AudioClip clickClip;
@@ -24,13 +25,35 @@ public class GameUI : MonoBehaviour
 
     void Update()
     {
-        if (gameManager.maxTimesTables < 2)
+        if (gameManager.maxTimesTables < 3)
         {
-            startButton.GetComponent<Button>().interactable = false;
+            startButton.interactable = false;
         }
         else
         {
-            startButton.GetComponent<Button>().interactable = true;
+            startButton.interactable = true;
+
+            if (gameManager.tutorialStage == 2)
+            {
+                audioSource.PlayOneShot(gameManager.tutorialClips[5]);
+                gameManager.tutorialStage = 3;
+
+                StartCoroutine(TutorialImpatience());
+            }
+        }
+
+        if(gameManager.tutorialStage == 0)
+        {
+            tutorialButton.interactable = true;
+        }
+    }
+
+    private IEnumerator TutorialImpatience()
+    {
+        yield return new WaitForSeconds(10);
+        if (gameManager.tutorialStage == 3)
+        {
+            audioSource.PlayOneShot(gameManager.tutorialClips[6]);
         }
     }
 
@@ -47,5 +70,11 @@ public class GameUI : MonoBehaviour
         mainMenuCanvas.gameObject.SetActive(true);
         gameOverCanvas.gameObject.SetActive(false);
         audioSource.PlayOneShot(clickClip);
+    }
+
+    public void TutorialButton()
+    {
+        tutorialButton.interactable = false;
+        StartCoroutine(gameManager.StartTutorial());
     }
 }
